@@ -148,6 +148,13 @@ function renderForm(){
   if(state.type==="wifi") html=`<div class="two">${inputField(labels.wifi,"ssid","text","My WiFi")}${inputField(state.lang==="km"?"ពាក្យសម្ងាត់":"Password","password","text","password")}</div><div class="field"><label>${state.lang==="km"?"សុវត្ថិភាព":"Security"}</label><select data-key="security"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="">Open</option></select></div>`;
   if(state.type==="phone") html=inputField(labels.phone,"phone","tel","+855 12 345 678");
   if(state.type==="vcard") html=`<div class="two">${inputField(labels.vcard,"name","text","Your Name")}${inputField(state.lang==="km"?"លេខទូរស័ព្ទ":"Phone","phone","tel","+855 12 345 678")}</div>${inputField(state.lang==="km"?"អ៊ីមែល":"Email","email","email","hello@example.com")}${inputField(state.lang==="km"?"ក្រុមហ៊ុន":"Company","company","text","ZENVRIC")}`;
+  if(state.type==="pdf") {
+    html = `<div class="pdf-coming-soon-banner" style="text-align:center;padding:24px 16px;background:rgba(239,68,68,0.06);border:2px dashed #fca5a5;border-radius:18px;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      <h3 style="margin:0 0 6px;color:#991b1b;font-size:16px;">${state.lang==='km'?'📄 មុខងារ PDF ទៅជា QR ជិតមកដល់ហើយ!':'📄 PDF to QR Converter Coming Soon!'}</h3>
+      <p style="margin:0;color:#7f1d1d;font-size:11px;line-height:1.5;">${state.lang==='km'?'មុខងារនេះអនុញ្ញាតឲ្យលោកអ្នកបង្ហោះឯកសារ PDF ហើយបំប្លែងទៅជា QR Code ដោយផ្ទាល់។':'Convert PDF documents & booklets into downloadable QR codes in the next update.'}</p>
+    </div>`;
+  }
   if(state.type==="location") html=`
     <div class="location-track-banner">
       <button type="button" class="track-loc-btn" id="trackLocationBtn">
@@ -162,6 +169,10 @@ function renderForm(){
         <span id="trackLocText">${t("trackLocation")}</span>
       </button>
     </div>
+    <div class="map-picker-box">
+      <div id="locationMap" style="height: 195px; border-radius: 16px; border: 2px solid #cbd5e1; margin-bottom: 6px; z-index: 1; overflow: hidden;"></div>
+      <small style="display:block; color:#64748b; font-size:10px; font-weight:700; margin-bottom:12px;">📍 ${state.lang === 'km' ? 'ចុចលើផែនទីដើម្បីជ្រើសរើសទីតាំង QR Code' : 'Click anywhere on the map to set QR pin location'}</small>
+    </div>
     <div class="two">${inputField(state.lang==="km"?"Latitude":"Latitude","lat","text","11.5564")}${inputField(state.lang==="km"?"Longitude":"Longitude","lng","text","104.9282")}</div>
     ${inputField(state.lang==="km"?"ឈ្មោះទីតាំង":"Place name","place","text","Phnom Penh")}
   `;
@@ -173,9 +184,50 @@ function renderForm(){
   }
 }
 
+let locationMapInstance = null;
+let locationMarker = null;
+
 function attachLocationTracker() {
   const trackBtn = document.getElementById("trackLocationBtn");
   const trackText = document.getElementById("trackLocText");
+
+  const latInput = formArea.querySelector('[data-key="lat"]');
+  const lngInput = formArea.querySelector('[data-key="lng"]');
+  const placeInput = formArea.querySelector('[data-key="place"]');
+
+  const defaultLat = parseFloat(latInput?.value) || 11.5564;
+  const defaultLng = parseFloat(lngInput?.value) || 104.9282;
+
+  if (typeof L !== "undefined" && document.getElementById("locationMap")) {
+    if (locationMapInstance) {
+      locationMapInstance.remove();
+      locationMapInstance = null;
+    }
+
+    setTimeout(() => {
+      const mapEl = document.getElementById("locationMap");
+      if (!mapEl) return;
+      locationMapInstance = L.map("locationMap").setView([defaultLat, defaultLng], 13);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap"
+      }).addTo(locationMapInstance);
+
+      locationMarker = L.marker([defaultLat, defaultLng]).addTo(locationMapInstance);
+
+      locationMapInstance.on("click", (e) => {
+        const lat = e.latlng.lat.toFixed(6);
+        const lng = e.latlng.lng.toFixed(6);
+        if (locationMarker) locationMarker.setLatLng(e.latlng);
+        if (latInput) latInput.value = lat;
+        if (lngInput) lngInput.value = lng;
+        if (placeInput && (!placeInput.value || placeInput.value === "Phnom Penh")) {
+          placeInput.value = "Map Location (" + lat + ", " + lng + ")";
+        }
+        updatePreview();
+      });
+    }, 120);
+  }
 
   if (trackBtn) {
     trackBtn.addEventListener("click", () => {
@@ -192,13 +244,15 @@ function attachLocationTracker() {
           const lat = position.coords.latitude.toFixed(6);
           const lng = position.coords.longitude.toFixed(6);
 
-          const latInput = formArea.querySelector('[data-key="lat"]');
-          const lngInput = formArea.querySelector('[data-key="lng"]');
-          const placeInput = formArea.querySelector('[data-key="place"]');
-
           if (latInput) latInput.value = lat;
           if (lngInput) lngInput.value = lng;
-          if (placeInput && !placeInput.value) placeInput.value = "Current Location (" + lat + ", " + lng + ")";
+          if (placeInput && !placeInput.value) placeInput.value = "GPS Location (" + lat + ", " + lng + ")";
+
+          if (locationMapInstance && locationMarker) {
+            const newPos = [parseFloat(lat), parseFloat(lng)];
+            locationMarker.setLatLng(newPos);
+            locationMapInstance.setView(newPos, 15);
+          }
 
           if (trackText) trackText.textContent = t("locationFound");
           trackBtn.disabled = false;
