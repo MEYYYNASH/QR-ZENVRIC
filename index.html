@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#5b55f6">
+  <title>ZENVRIC — QR Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">Z</div>
+        <div>
+          <strong>ZENVRIC</strong>
+          <span>QR Studio</span>
+        </div>
+      </div>
+
+      <nav class="side-nav">
+        <button class="nav-item active" data-view="create"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></span><b data-i18n="create">Create QR</b></button>
+        <button class="nav-item" data-view="templates"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg></span><b data-i18n="templates">Templates</b></button>
+        <button class="nav-item" data-view="history"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span><b data-i18n="history">History</b></button>
+        <button class="nav-item" data-view="settings"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span><b data-i18n="settings">Settings</b></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="pro-card">
+          <div class="pro-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"></path></svg></div>
+          <div>
+            <strong>ZENVRIC Pro</strong>
+            <small data-i18n="proText">Create polished QR designs faster.</small>
+          </div>
+        </div>
+        <button class="language-mini" id="languageMini">EN / ខ្មែរ</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <span class="eyebrow" data-i18n="eyebrow">SMART QR CREATOR</span>
+          <h1 data-i18n="title">Create your QR code</h1>
+          <p data-i18n="subtitle">Generate, style, download and share beautiful QR codes.</p>
+        </div>
+        <div class="top-actions">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu" title="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+          <button class="vip-login-btn" id="authBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span id="userBtnLabel" data-i18n="earlyAccessBtn">LOGIN</span></button>
+          <button class="icon-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Toggle Theme"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button>
+          <button class="icon-btn" id="compactBtn" title="Compact mode">↔</button>
+          <button class="lang-btn" id="languageBtn"><span id="currentLang">EN</span><span>⌄</span></button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-create">
+        <div class="workspace">
+          <div class="panel form-panel">
+            <div class="panel-head">
+              <div><span class="eyebrow" data-i18n="destination">SELECT DESTINATION</span><h2 data-i18n="destinationHint">Choose what your QR code opens.</h2></div>
+            </div>
+
+            <div class="type-grid">
+              <button class="type-card active" data-type="website"><div class="type-icon website"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div><span data-i18n="website">Website</span></button>
+              <button class="type-card" data-type="text"><div class="type-icon text"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div><span data-i18n="text">Text</span></button>
+              <button class="type-card" data-type="email"><div class="type-icon email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div><span data-i18n="email">Email</span></button>
+              <button class="type-card" data-type="sms"><div class="type-icon sms"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div><span data-i18n="sms">SMS</span></button>
+              <button class="type-card" data-type="wifi"><div class="type-icon wifi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg></div><span data-i18n="wifi">Wi‑Fi</span></button>
+              <button class="type-card" data-type="phone"><div class="type-icon phone"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div><span data-i18n="phone">Phone</span></button>
+              <button class="type-card" data-type="vcard"><div class="type-icon vcard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div><span data-i18n="contact">Contact</span></button>
+              <button class="type-card" data-type="location"><div class="type-icon location"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><span data-i18n="location">Location</span></button>
+            </div>
+
+            <div id="formArea" class="form-area"></div>
+
+            <div class="style-section">
+              <div class="section-title">
+                <div><h3 data-i18n="style">QR style</h3><small data-i18n="styleHint">Customize colors & rounded corners.</small></div>
+                <button class="text-btn" id="resetStyle" data-i18n="reset">Reset</button>
+              </div>
+
+              <div class="style-row">
+                <label><span data-i18n="foreground">Foreground</span><input id="fgColor" type="color" value="#161936"></label>
+                <label><span data-i18n="background">Background</span><input id="bgColor" type="color" value="#ffffff"></label>
+                <label><span data-i18n="radius">Corners</span><input id="radiusRange" type="range" min="0" max="28" value="12"></label>
+              </div>
+            </div>
+
+            <div class="custom-card-section">
+              <div class="section-title">
+                <div><h3 data-i18n="cardTextSection">Card Text & Photo</h3><small data-i18n="cardTextHint">Customize header, title & center photo.</small></div>
+              </div>
+              <div class="custom-fields-grid">
+                <div class="field"><label data-i18n="brandLabel">Brand header</label><input id="customBrandInput" type="text" placeholder="ZENVRIC • MIDNIGHT"></div>
+                <div class="two">
+                  <div class="field"><label data-i18n="titleLabel">Card title</label><input id="customTitleInput" type="text" placeholder="Scan to open"></div>
+                  <div class="field"><label data-i18n="descLabel">Description</label><input id="customDescInput" type="text" placeholder="Your QR code is ready to share."></div>
+                </div>
+                <div class="field photo-field">
+                  <label data-i18n="addPhoto">Center Photo / Logo</label>
+                  <div class="photo-input-row">
+                    <input id="logoInput" type="file" accept="image/*" class="hidden">
+                    <button type="button" class="secondary-btn photo-btn" id="logoUploadBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> <span data-i18n="selectPhoto">Add Photo / Logo</span></button>
+                    <button type="button" class="text-btn danger hidden" id="removeLogoBtn" data-i18n="removePhoto">Remove Photo</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="daily-quota-wrapper" id="dailyQuotaBadge">
+              <span class="quota-badge">⚡ Daily Free Quota: 0 / 10 Used Today</span>
+            </div>
+
+            <div class="generate-btn-row">
+              <button type="button" class="generate-btn" id="generateBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span data-i18n="generateQr">Generate & Preview QR</span>
+              </button>
+            </div>
+
+            <div class="template-strip">
+              <div class="section-title">
+                <div><h3 data-i18n="templates">Background templates</h3><small data-i18n="templateHint">Select background theme.</small></div>
+                <button class="text-btn" id="viewTemplatesBtn" data-i18n="viewAll">View all</button>
+              </div>
+              <div class="template-mini-row" id="miniTemplates"></div>
+            </div>
+          </div>
+
+          <div class="panel preview-panel">
+            <div class="preview-top">
+              <div>
+                <span class="live-dot"></span>
+                <span data-i18n="livePreview">Live preview</span>
+              </div>
+              <button class="icon-btn" id="fullscreenPreview" title="Fullscreen">⛶</button>
+            </div>
+
+            <div class="qr-stage" id="qrStage">
+              <div class="template-content" id="templateContent">
+                <span class="template-label" id="templateLabel">ZENVRIC • MIDNIGHT</span>
+                <div id="qrBox" class="qr-box">
+                  <div id="qrcode"></div>
+                  <img id="qrLogoOverlay" class="qr-logo-overlay hidden" alt="Center Logo" />
+                </div>
+                <h3 id="previewTitle" data-i18n="scan">Scan to open</h3>
+                <p id="previewText" data-i18n="qrReady">Your QR code is ready to share.</p>
+              </div>
+            </div>
+
+            <div class="preview-meta">
+              <div><span class="meta-label" data-i18n="type">Type</span><strong id="previewType">Website</strong></div>
+              <div><span class="meta-label" data-i18n="status">Status</span><strong class="ready"><i></i><span data-i18n="ready">Ready</span></strong></div>
+            </div>
+
+            <div class="action-row">
+              <button class="secondary-btn" id="copyBtn" data-i18n="copy">Copy content</button>
+              <button class="primary-btn" id="downloadBtn" data-i18n="download">Download PNG</button>
+            </div>
+            <button class="share-btn" id="shareBtn" data-i18n="share">Share QR code</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-templates">
+        <div class="page-panel">
+          <div class="page-heading"><div><span class="eyebrow">ZENVRIC LIBRARY</span><h2 data-i18n="templatePage">QR background templates</h2><p data-i18n="templatePageHint">Choose a visual frame, then continue creating your code.</p></div></div>
+          <div class="template-gallery" id="templateGallery"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-history">
+        <div class="page-panel">
+          <div class="page-heading"><div><span class="eyebrow">RECENT</span><h2 data-i18n="historyPage">Recent QR codes</h2><p data-i18n="historyHint">Your latest local QR creations are saved on this device.</p></div><button class="secondary-btn" id="clearHistory" data-i18n="clear">Clear history</button></div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="page-panel settings-page">
+          <div class="page-heading"><div><span class="eyebrow">ZENVRIC</span><h2 data-i18n="settingsPage">Settings</h2><p data-i18n="settingsHint">Language, theme appearance and color controls.</p></div></div>
+          <div class="settings-grid">
+            <div class="setting-card"><div><b data-i18n="language">Language</b><small data-i18n="languageHint">Choose your interface language.</small></div><select id="languageSelect"><option value="en">English</option><option value="km">ខ្មែរ (Khmer)</option></select></div>
+            <div class="setting-card"><div><b data-i18n="siteTheme">Website Theme</b><small data-i18n="siteThemeHint">Select Light, Dark, Cyberpunk, or Glassmorphism mode.</small></div><select id="siteThemeSelect"><option value="light">☀️ Light Glass</option><option value="dark">🌙 Dark Slate</option><option value="cyberpunk">⚡ Cyberpunk Neon</option><option value="glassmorphism">💎 Glassmorphism</option></select></div>
+            <div class="setting-card"><div><b data-i18n="compact">Compact mode</b><small data-i18n="compactHint">Reduce spacing for a denser workspace.</small></div><button class="switch" id="compactSwitch"><span></span></button></div>
+            <div class="setting-card">
+              <div><b data-i18n="accent">Accent Color Customization</b><small data-i18n="accentHint">Choose a theme color preset or pick a custom hex color.</small></div>
+              <div class="color-picker-group">
+                <div class="color-presets">
+                  <button class="preset-btn" data-color="#5b55f6" style="background:#5b55f6" title="ZENVRIC Violet"></button>
+                  <button class="preset-btn" data-color="#00ffff" style="background:#00ffff" title="Neon Cyan"></button>
+                  <button class="preset-btn" data-color="#ff00ff" style="background:#ff00ff" title="Neon Pink"></button>
+                  <button class="preset-btn" data-color="#10b981" style="background:#10b981" title="Emerald Green"></button>
+                  <button class="preset-btn" data-color="#f97316" style="background:#f97316" title="Sunset Orange"></button>
+                  <button class="preset-btn" data-color="#2563eb" style="background:#2563eb" title="Royal Blue"></button>
+                </div>
+                <input id="accentColor" type="color" value="#5b55f6">
+              </div>
+            </div>
+            <div class="setting-card redeem-card">
+              <div>
+                <b data-i18n="redeemHeader">Redeem Premium VIP Code</b>
+                <small data-i18n="redeemHint">Enter promo code (e.g. ZENVRIC2026) to unlock VIP status.</small>
+              </div>
+              <div class="redeem-input-row">
+                <input type="text" id="redeemCodeInput" placeholder="ZENVRIC2026" style="text-transform:uppercase;">
+                <button type="button" class="primary-btn redeem-btn" id="redeemCodeBtn" data-i18n="redeemBtn">Redeem</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="language-overlay" id="languageOverlay">
+    <div class="language-modal">
+      <div class="modal-logo">Z</div>
+      <span class="eyebrow">ZENVRIC</span>
+      <h2 data-i18n="welcome">Choose your language</h2>
+      <p data-i18n="welcomeHint">Select your preferred language before using ZENVRIC.</p>
+      <div class="language-options">
+        <button data-lang-choice="en"><strong>English</strong><span>English interface</span></button>
+        <button data-lang-choice="km"><strong>ខ្មែរ</strong><span>ភាសាខ្មែរ</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Floating Mobile Capsule Tap Bar (Image 2 style) -->
+  <div class="mobile-tap-bar" id="mobileTapBar">
+    <button class="tap-item active" data-tap-target="edit" id="tapEditBtn">
+      <span class="tap-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></span>
+      <span class="tap-label" data-i18n="mobileEdit">Create</span>
+    </button>
+    <button class="tap-item" data-tap-target="preview" id="tapPreviewBtn">
+      <span class="tap-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+      <span class="tap-label" data-i18n="mobilePreview">Preview</span>
+    </button>
+    <button class="tap-item" data-tap-target="templates" id="tapTemplatesBtn">
+      <span class="tap-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg></span>
+      <span class="tap-label" data-i18n="templates">Templates</span>
+    </button>
+    <button class="tap-item" data-tap-target="history" id="tapHistoryBtn">
+      <span class="tap-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+      <span class="tap-label" data-i18n="history">History</span>
+    </button>
+    <button class="tap-item" data-tap-target="settings" id="tapSettingsBtn">
+      <span class="tap-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+      <span class="tap-label" data-i18n="settings">Settings</span>
+    </button>
+  </div>
+
+  <!-- Compact QR Sheet Modal (Full Live Preview Card View) -->
+  <div class="qr-sheet-backdrop" id="qrSheetBackdrop"></div>
+  <div class="qr-sheet-modal" id="qrSheetModal">
+    <div class="sheet-handle"></div>
+    
+    <div class="sheet-preview-top">
+      <div>
+        <span class="live-dot"></span>
+        <span data-i18n="livePreview">Live preview</span>
+      </div>
+      <button class="icon-btn" id="sheetFullscreenBtn">⛶</button>
+    </div>
+
+    <div class="sheet-qr-stage" id="sheetQrStage">
+      <span class="template-label" id="sheetTemplateLabel">ZENVRIC • MIDNIGHT</span>
+      <div class="sheet-qr-box" id="sheetQrBox"></div>
+      <h3 id="sheetPreviewTitle">Scan to open</h3>
+      <p id="sheetPreviewText">Your QR code is ready to share.</p>
+    </div>
+
+    <div class="sheet-preview-meta">
+      <div><span class="meta-label" data-i18n="type">Type</span><strong id="sheetPreviewType">Website</strong></div>
+      <div><span class="meta-label" data-i18n="status">Status</span><strong class="ready"><i></i><span data-i18n="ready">Ready</span></strong></div>
+    </div>
+
+    <div class="sheet-action-row">
+      <button class="secondary-btn" id="sheetCopyBtn" data-i18n="copy">Copy content</button>
+      <button class="primary-btn" id="sheetDownloadBtn" data-i18n="download">Download PNG</button>
+    </div>
+    <button class="share-btn" id="sheetShareBtn" data-i18n="share">Share QR code</button>
+    <button class="sheet-close-btn" id="sheetCloseBtn" data-i18n="sheetClose">Close</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Account Login & Early Access VIP Modal -->
+  <div class="auth-modal-backdrop" id="authBackdrop"></div>
+  <div class="auth-modal" id="authModal">
+    <button class="auth-close-btn" id="authCloseBtn">&times;</button>
+    <div class="auth-header">
+      <div class="vip-badge-pill">VIP EARLY ACCESS</div>
+      <h2 id="authTitle" data-i18n="authHeader">VIP Early Access</h2>
+      <p id="authSubtitle" data-i18n="authSub">Sign in or enter your access code to unlock VIP template posters.</p>
+    </div>
+
+    <form class="auth-form" id="authForm" onsubmit="return false;">
+      <div class="field">
+        <label data-i18n="emailLabel">Email Address</label>
+        <input type="email" id="authEmail" placeholder="name@domain.com" required>
+      </div>
+      <div class="field">
+        <label data-i18n="passLabel">Password / VIP Code</label>
+        <input type="password" id="authPassword" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="auth-submit-btn" id="authSubmitBtn">
+        <span data-i18n="loginBtn">Claim VIP Early Access</span>
+      </button>
+
+      <div class="auth-divider"><span data-i18n="or">OR CONTINUE WITH</span></div>
+
+      <div class="social-login-grid">
+        <button type="button" class="social-btn google" id="googleAuthBtn" disabled title="Google Login Coming Soon">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.15C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.29c-.8 1.6-1.29 3.42-1.29 5.39s.49 3.79 1.29 5.39l3.99-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.61l3.99 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
+          Google <span class="soon-tag">SOON</span>
+        </button>
+        <button type="button" class="social-btn github" id="githubAuthBtn" disabled title="GitHub Login Coming Soon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub <span class="soon-tag">SOON</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-logged-in hidden" id="authLoggedIn">
+      <div class="user-profile-card">
+        <div class="avatar" id="userAvatar">US</div>
+        <div class="user-info">
+          <strong id="userName">Free Member</strong>
+          <small id="userEmail">user@zenvric.com</small>
+          <span class="active-badge free-active" id="userStatusBadge">⚡ Free Account (10 QR/day limit)</span>
+        </div>
+      </div>
+      <button class="secondary-btn logout-btn" id="logoutBtn" data-i18n="logout">Sign Out</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
