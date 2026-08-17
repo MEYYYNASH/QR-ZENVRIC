@@ -412,7 +412,14 @@ function attachLocationTracker() {
 }
 
 function getFormData(){
-  const d={}; formArea.querySelectorAll("[data-key]").forEach(el=>d[el.dataset.key]=el.value.trim()); return d;
+  const d={};
+  if (formArea) {
+    formArea.querySelectorAll("[data-key]").forEach(el => {
+      const val = el.value !== undefined ? el.value : (el.textContent || "");
+      d[el.dataset.key] = String(val || "").trim();
+    });
+  }
+  return d;
 }
 function makePayload(){
   const d=getFormData();
@@ -530,7 +537,7 @@ function renderMiniTemplates(){
       <span>${x.name}</span>
     </button>
   `).join("");
-  document.querySelectorAll("[data-template]").forEach(b=>b.addEventListener("click",()=>selectTemplate(b.dataset.template)));
+  document.querySelectorAll("[data-template]").forEach(b=>b.addEventListener("click",()=>selectTemplate(b.dataset.template, true)));
 }
 
 function renderTemplates(){
@@ -551,16 +558,19 @@ function renderTemplates(){
       </div>
     </div>
   `).join("");
-  document.querySelectorAll("[data-gallery-template]").forEach(b=>b.addEventListener("click",()=>selectTemplate(b.dataset.galleryTemplate)));
+  document.querySelectorAll("[data-gallery-template]").forEach(b=>b.addEventListener("click",()=>selectTemplate(b.dataset.galleryTemplate, true)));
 }
 
-function selectTemplate(id){
+function selectTemplate(id, showNotification = false){
   state.template=id; localStorage.setItem("zenvric-template",id);
   const x=templates.find(a=>a.id===id);
-  qrStage.className="qr-stage "+x.cls;
-  if(["night","purple","sunset","cyan","pink","anime","spiderman","work","cyberpunk","neo_dark"].includes(id)) templateContent.style.color="#fff"; else templateContent.style.color="";
-  if (!state.customBrand) {
-    document.getElementById("templateLabel").textContent="ZENVRIC • "+x.name.toUpperCase();
+  if (qrStage && x) qrStage.className="qr-stage "+x.cls;
+  if (templateContent) {
+    if(["night","purple","sunset","cyan","pink","anime","spiderman","work","cyberpunk","neo_dark"].includes(id)) templateContent.style.color="#fff"; else templateContent.style.color="";
+  }
+  const labelEl = document.getElementById("templateLabel");
+  if (labelEl && !state.customBrand && x) {
+    labelEl.textContent="ZENVRIC • "+x.name.toUpperCase();
   }
 
   const qrBox = document.querySelector(".qr-box");
@@ -574,7 +584,9 @@ function selectTemplate(id){
     qrBox.appendChild(handBadge);
   }
 
-  renderMiniTemplates(); renderTemplates(); showToast(t("selected"));
+  renderMiniTemplates();
+  renderTemplates();
+  if (showNotification) showToast(t("selected"));
 }
 function saveHistory(){
   const payload=makePayload(); if(!validPayload(payload)){showToast(t("required"));return false}
