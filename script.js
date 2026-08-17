@@ -149,11 +149,53 @@ function renderForm(){
   if(state.type==="phone") html=inputField(labels.phone,"phone","tel","+855 12 345 678");
   if(state.type==="vcard") html=`<div class="two">${inputField(labels.vcard,"name","text","Your Name")}${inputField(state.lang==="km"?"លេខទូរស័ព្ទ":"Phone","phone","tel","+855 12 345 678")}</div>${inputField(state.lang==="km"?"អ៊ីមែល":"Email","email","email","hello@example.com")}${inputField(state.lang==="km"?"ក្រុមហ៊ុន":"Company","company","text","ZENVRIC")}`;
   if(state.type==="pdf") {
-    html = `<div class="pdf-coming-soon-banner" style="text-align:center;padding:24px 16px;background:rgba(239,68,68,0.06);border:2px dashed #fca5a5;border-radius:18px;">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-      <h3 style="margin:0 0 6px;color:#991b1b;font-size:16px;">${state.lang==='km'?'📄 មុខងារ PDF ទៅជា QR ជិតមកដល់ហើយ!':'📄 PDF to QR Converter Coming Soon!'}</h3>
-      <p style="margin:0;color:#7f1d1d;font-size:11px;line-height:1.5;">${state.lang==='km'?'មុខងារនេះអនុញ្ញាតឲ្យលោកអ្នកបង្ហោះឯកសារ PDF ហើយបំប្លែងទៅជា QR Code ដោយផ្ទាល់។':'Convert PDF documents & booklets into downloadable QR codes in the next update.'}</p>
-    </div>`;
+    html = `
+      <div class="pdf-tools-container">
+        <div class="pdf-tools-header">
+          <h3>📄 ${state.lang==='km'?'ZENVRIC PDF Studio & Tools':'ZENVRIC PDF Studio & Tools'}</h3>
+          <p>${state.lang==='km'?'បង្ហោះឯកសារ PDF ដើម្បីដាក់ Watermark, បង្វិលទំព័រ ឬ បំប្លែងទៅជា PDF QR Code។':'Upload a PDF document to Watermark text, Rotate pages, or Convert to PDF QR Code.'}</p>
+        </div>
+
+        <div class="field">
+          <label>${state.lang==='km'?'ជ្រើសរើសឯកសារ PDF':'Select PDF Document'}</label>
+          <input type="file" id="pdfFileInput" accept="application/pdf" style="padding:10px;">
+        </div>
+
+        <div class="pdf-tool-tabs">
+          <button type="button" class="pdf-tab active" data-pdf-tab="watermark">💧 ${state.lang==='km'?'ដាក់ Watermark':'Watermark'}</button>
+          <button type="button" class="pdf-tab" data-pdf-tab="rotate">🔄 ${state.lang==='km'?'បង្វិលទំព័រ':'Rotate Pages'}</button>
+          <button type="button" class="pdf-tab" data-pdf-tab="qr">🔲 ${state.lang==='km'?'PDF ទៅជា QR':'PDF to QR'}</button>
+        </div>
+
+        <div class="pdf-tab-content active" id="pdfTabWatermark">
+          <div class="field">
+            <label>${state.lang==='km'?'អត្ថបទ Watermark':'Watermark Text'}</label>
+            <input type="text" id="pdfWatermarkText" placeholder="CONFIDENTIAL" value="CONFIDENTIAL">
+          </div>
+          <button type="button" class="primary-btn pdf-action-btn" id="pdfApplyWatermarkBtn">💧 ${state.lang==='km'?'ដាក់ Watermark & ទាញយក PDF':'Apply Watermark & Download PDF'}</button>
+        </div>
+
+        <div class="pdf-tab-content hidden" id="pdfTabRotate">
+          <div class="field">
+            <label>${state.lang==='km'?'មុំបង្វិល':'Rotation Angle'}</label>
+            <select id="pdfRotateAngle">
+              <option value="90">90° Clockwise (ស្តាំ)</option>
+              <option value="180">180° Upside Down (ត្រឡប់)</option>
+              <option value="270">270° Counter-Clockwise (ឆ្វេង)</option>
+            </select>
+          </div>
+          <button type="button" class="primary-btn pdf-action-btn" id="pdfApplyRotateBtn">🔄 ${state.lang==='km'?'បង្វិលទំព័រ & ទាញយក PDF':'Rotate Pages & Download PDF'}</button>
+        </div>
+
+        <div class="pdf-tab-content hidden" id="pdfTabQr">
+          <div class="field">
+            <label>${state.lang==='km'?'ឈ្មោះឯកសារ PDF':'Document Title'}</label>
+            <input type="text" id="pdfDocNameInput" placeholder="Booklet.pdf" value="Document.pdf" data-key="pdfName">
+          </div>
+          <button type="button" class="primary-btn pdf-action-btn" id="pdfGenerateQrBtn">⚡ ${state.lang==='km'?'បង្កើត PDF QR Code':'Generate PDF QR Code'}</button>
+        </div>
+      </div>
+    `;
   }
   if(state.type==="location") html=`
     <div class="location-track-banner">
@@ -182,6 +224,106 @@ function renderForm(){
   if(state.type==="location") {
     attachLocationTracker();
   }
+  if(state.type==="pdf") {
+    attachPdfTools();
+  }
+}
+
+function attachPdfTools() {
+  const tabs = document.querySelectorAll("[data-pdf-tab]");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.pdfTab;
+      document.getElementById("pdfTabWatermark")?.classList.toggle("hidden", target !== "watermark");
+      document.getElementById("pdfTabRotate")?.classList.toggle("hidden", target !== "rotate");
+      document.getElementById("pdfTabQr")?.classList.toggle("hidden", target !== "qr");
+    });
+  });
+
+  document.getElementById("pdfApplyWatermarkBtn")?.addEventListener("click", async () => {
+    const fileInput = document.getElementById("pdfFileInput");
+    const textInput = document.getElementById("pdfWatermarkText");
+    const file = fileInput?.files[0];
+    if (!file) {
+      showToast(state.lang === "km" ? "សូមជ្រើសរើសឯកសារ PDF!" : "Please select a PDF file first!");
+      return;
+    }
+    const text = textInput?.value || "CONFIDENTIAL";
+    try {
+      showToast("⏳ " + (state.lang === "km" ? "កំពុងដាក់ Watermark..." : "Applying watermark..."));
+      const arrayBuffer = await file.arrayBuffer();
+      const { PDFDocument, rgb, degrees } = window.PDFLib || {};
+      if (!PDFDocument) throw new Error("PDF Engine not loaded");
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      const pages = pdfDoc.getPages();
+      for (const page of pages) {
+        const { width, height } = page.getSize();
+        page.drawText(text, {
+          x: width / 5,
+          y: height / 2,
+          size: Math.min(width, height) / 12,
+          rotate: degrees(45),
+          opacity: 0.3,
+          color: rgb(0.35, 0.33, 0.96)
+        });
+      }
+      const modifiedBytes = await pdfDoc.save();
+      const blob = new Blob([modifiedBytes], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = (file.name.replace(/\.pdf$/i, "") || "document") + "_watermarked.pdf";
+      link.click();
+      showToast("💧 Watermarked PDF Downloaded!");
+    } catch (e) {
+      showToast("Error processing PDF: " + e.message);
+    }
+  });
+
+  document.getElementById("pdfApplyRotateBtn")?.addEventListener("click", async () => {
+    const fileInput = document.getElementById("pdfFileInput");
+    const angleSelect = document.getElementById("pdfRotateAngle");
+    const file = fileInput?.files[0];
+    if (!file) {
+      showToast(state.lang === "km" ? "សូមជ្រើសរើសឯកសារ PDF!" : "Please select a PDF file first!");
+      return;
+    }
+    const angle = parseInt(angleSelect?.value || "90", 10);
+    try {
+      showToast("⏳ " + (state.lang === "km" ? "កំពុងបង្វិលទំព័រ..." : "Rotating pages..."));
+      const arrayBuffer = await file.arrayBuffer();
+      const { PDFDocument, degrees } = window.PDFLib || {};
+      if (!PDFDocument) throw new Error("PDF Engine not loaded");
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      const pages = pdfDoc.getPages();
+      for (const page of pages) {
+        const current = page.getRotation().angle || 0;
+        page.setRotation(degrees((current + angle) % 360));
+      }
+      const modifiedBytes = await pdfDoc.save();
+      const blob = new Blob([modifiedBytes], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = (file.name.replace(/\.pdf$/i, "") || "document") + "_rotated.pdf";
+      link.click();
+      showToast("🔄 Rotated PDF Downloaded!");
+    } catch (e) {
+      showToast("Error processing PDF: " + e.message);
+    }
+  });
+
+  document.getElementById("pdfGenerateQrBtn")?.addEventListener("click", () => {
+    const fileInput = document.getElementById("pdfFileInput");
+    const nameInput = document.getElementById("pdfDocNameInput");
+    const file = fileInput?.files[0];
+    const docName = nameInput?.value || (file ? file.name : "PDF Document");
+    state.pdfDocName = docName;
+    updatePreview();
+    showQrSheet();
+    showToast(state.lang === "km" ? "បានបង្កើត PDF QR Code!" : "PDF QR Code Generated!");
+  });
+}
 }
 
 let locationMapInstance = null;
@@ -282,6 +424,7 @@ function makePayload(){
   if(state.type==="phone") return `tel:${d.phone}`;
   if(state.type==="vcard") return `BEGIN:VCARD\nVERSION:3.0\nFN:${d.name||""}\nTEL:${d.phone||""}\nEMAIL:${d.email||""}\nORG:${d.company||""}\nEND:VCARD`;
   if(state.type==="location") return `geo:${d.lat||""},${d.lng||""}?q=${encodeURIComponent(d.place||"")}`;
+  if(state.type==="pdf") return `https://zenvric.com/pdf/${encodeURIComponent(d.pdfName || state.pdfDocName || "document.pdf")}`;
   return "";
 }
 function validPayload(payload){ return payload && payload.length > 0; }
@@ -293,7 +436,7 @@ function updatePreview(){
   if(validPayload(payload)){
     state.qr=new QRCode(qrcodeEl,{text:payload,width:210,height:210,colorDark:fg,colorLight:bg,correctLevel:QRCode.CorrectLevel.H});
   }
-  previewType.textContent = ({website:t("website"),text:t("text"),email:t("email"),sms:t("sms"),wifi:t("wifi"),phone:t("phone"),vcard:t("contact"),location:t("location")})[state.type];
+  previewType.textContent = ({website:t("website"),text:t("text"),email:t("email"),sms:t("sms"),wifi:t("wifi"),phone:t("phone"),vcard:t("contact"),location:t("location"),pdf:"PDF Document"})[state.type];
   
   const tmpl = templates.find(a=>a.id===state.template);
   const defaultLabel = "ZENVRIC • " + (tmpl ? tmpl.name.toUpperCase() : "");

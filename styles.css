@@ -205,5 +205,14 @@ body.theme-glassmorphism .panel,body.theme-glassmorphism .page-panel,body.theme-
 
 .leaflet-control-attribution{display:none!important}
 
+.pdf-tools-container{background:#ffffff;border:2px solid #cbd5e1;border-radius:20px;padding:20px;margin-top:6px}
+.pdf-tools-header h3{margin:0 0 4px;font-size:16px;color:#0f172a}
+.pdf-tools-header p{margin:0 0 16px;font-size:11px;color:#64748b;line-height:1.4}
+.pdf-tool-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0}
+.pdf-tab{padding:9px 6px;border-radius:11px;border:1.5px solid #cbd5e1;background:#f8fafc;font-size:11px;font-weight:700;color:#334155;cursor:pointer;transition:all 0.2s ease}
+.pdf-tab.active{background:linear-gradient(135deg,var(--accent,#5b55f6),#8177ff);color:#ffffff;border-color:transparent;box-shadow:0 6px 16px rgba(91,85,246,0.25)}
+.pdf-tab-content{display:grid;gap:12px;margin-top:10px}
+.pdf-action-btn{width:100%;margin-top:4px}
+
 
 
