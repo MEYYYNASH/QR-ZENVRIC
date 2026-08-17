@@ -205,12 +205,9 @@ function attachLocationTracker() {
     }
 
     setTimeout(() => {
-      const mapEl = document.getElementById("locationMap");
-      if (!mapEl) return;
-      locationMapInstance = L.map("locationMap").setView([defaultLat, defaultLng], 13);
+      locationMapInstance = L.map("locationMap", { attributionControl: false }).setView([defaultLat, defaultLng], 13);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "© OpenStreetMap"
+        maxZoom: 19
       }).addTo(locationMapInstance);
 
       locationMarker = L.marker([defaultLat, defaultLng]).addTo(locationMapInstance);
