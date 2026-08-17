@@ -100,24 +100,44 @@ const previewText = document.getElementById("previewText");
 const previewType = document.getElementById("previewType");
 const toast = document.getElementById("toast");
 
-function t(key){ return translations[state.lang || "en"][key] || key; }
+function t(key){ return (translations[state.lang || "en"] || translations.en)[key] || key; }
 
 function applyLanguage(){
   document.documentElement.lang = state.lang || "en";
   document.body.classList.toggle("khmer", state.lang === "km");
-  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
-  document.getElementById("currentLang").textContent = state.lang === "km" ? "ខ្មែរ" : "EN";
-  document.getElementById("languageSelect").value = state.lang || "en";
-  renderForm();
-  renderHistory();
-  renderTemplates();
-  renderMiniTemplates();
-  updatePreview();
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    try {
+      const key = el.dataset.i18n;
+      const txt = t(key);
+      if (txt) {
+        if (el.children.length === 0) {
+          el.textContent = txt;
+        } else {
+          const textNode = Array.from(el.childNodes).find(n => n.nodeType === 3);
+          if (textNode) textNode.nodeValue = txt;
+          else el.textContent = txt;
+        }
+      }
+    } catch(e){}
+  });
+  const currentLangEl = document.getElementById("currentLang");
+  if (currentLangEl) currentLangEl.textContent = state.lang === "km" ? "ខ្មែរ" : "EN";
+  const langSelectEl = document.getElementById("languageSelect");
+  if (langSelectEl) langSelectEl.value = state.lang || "en";
+  
+  try { renderForm(); } catch(e){}
+  try { renderHistory(); } catch(e){}
+  try { renderTemplates(); } catch(e){}
+  try { renderMiniTemplates(); } catch(e){}
+  try { updatePreview(); } catch(e){}
 }
 
 function showToast(msg){
-  toast.textContent = msg; toast.classList.add("show");
-  clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>toast.classList.remove("show"),2200);
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast?.classList.remove("show"), 2200);
 }
 
 function inputField(label,key,type="text",placeholder="",value=""){
@@ -814,16 +834,40 @@ async function shareQR(){
   else {copyContent();}
 }
 
-document.querySelectorAll(".type-card").forEach(btn=>btn.addEventListener("click",()=>{
-  state.type=btn.dataset.type;document.querySelectorAll(".type-card").forEach(b=>b.classList.toggle("active",b===btn));renderForm();updatePreview();
-}));
-document.getElementById("fgColor").addEventListener("input",updatePreview);
-document.getElementById("bgColor").addEventListener("input",updatePreview);
-document.getElementById("radiusRange").addEventListener("input",updatePreview);
-document.getElementById("resetStyle").addEventListener("click",()=>{document.getElementById("fgColor").value="#171a35";document.getElementById("bgColor").value="#ffffff";document.getElementById("radiusRange").value=8;updatePreview()});
-document.getElementById("copyBtn").addEventListener("click",copyContent);
-document.getElementById("downloadBtn").addEventListener("click",downloadQR);
-document.getElementById("shareBtn").addEventListener("click",shareQR);
+window.switchType = function(type) {
+  if (!type) return;
+  state.type = type;
+  document.querySelectorAll(".type-card").forEach(b => {
+    const isSelected = (b.dataset.type === type) || (b.getAttribute("data-type") === type);
+    b.classList.toggle("active", isSelected);
+  });
+  renderForm();
+  updatePreview();
+};
+
+document.querySelectorAll(".type-card").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const type = btn.dataset.type || btn.getAttribute("data-type");
+    window.switchType(type);
+  });
+});
+document.getElementById("fgColor")?.addEventListener("input",updatePreview);
+document.getElementById("bgColor")?.addEventListener("input",updatePreview);
+document.getElementById("radiusRange")?.addEventListener("input",updatePreview);
+document.getElementById("resetStyle")?.addEventListener("click",()=>{
+  const fg = document.getElementById("fgColor");
+  const bg = document.getElementById("bgColor");
+  const rad = document.getElementById("radiusRange");
+  if(fg) fg.value="#171a35";
+  if(bg) bg.value="#ffffff";
+  if(rad) rad.value=8;
+  updatePreview();
+});
+document.getElementById("copyBtn")?.addEventListener("click",copyContent);
+document.getElementById("downloadBtn")?.addEventListener("click",downloadQR);
+document.getElementById("shareBtn")?.addEventListener("click",shareQR);
+
 function getDailyUsage() {
   const today = new Date().toISOString().slice(0, 10);
   const savedDate = localStorage.getItem("zenvric-daily-date");
@@ -898,18 +942,20 @@ generateBtn?.addEventListener("click", () => {
     showQrSheet();
   }, 420);
 });
-document.getElementById("clearHistory").addEventListener("click",()=>{state.history=[];localStorage.removeItem("zenvric-history");renderHistory();showToast(t("cleared"))});
+document.getElementById("clearHistory")?.addEventListener("click",()=>{state.history=[];localStorage.removeItem("zenvric-history");renderHistory();showToast(t("cleared"))});
 document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
 document.querySelectorAll("[data-view-link]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.viewLink)));
-document.getElementById("compactBtn").addEventListener("click",toggleCompact);
-document.getElementById("compactSwitch").addEventListener("click",toggleCompact);
+document.getElementById("compactBtn")?.addEventListener("click",toggleCompact);
+document.getElementById("compactSwitch")?.addEventListener("click",toggleCompact);
 document.getElementById("languageBtn")?.addEventListener("click", () => {
-  const overlay = document.getElementById("languageOverlay");
-  if (overlay) { overlay.classList.remove("hidden"); overlay.style.display = "grid"; }
+  const nextLang = state.lang === "km" ? "en" : "km";
+  setLanguage(nextLang);
+  showToast(nextLang === "km" ? "🌐 ភាសា: ខ្មែរ" : "🌐 Language: English");
 });
 document.getElementById("languageMini")?.addEventListener("click", () => {
-  const overlay = document.getElementById("languageOverlay");
-  if (overlay) { overlay.classList.remove("hidden"); overlay.style.display = "grid"; }
+  const nextLang = state.lang === "km" ? "en" : "km";
+  setLanguage(nextLang);
+  showToast(nextLang === "km" ? "🌐 ភាសា: ខ្មែរ" : "🌐 Language: English");
 });
 document.querySelectorAll("[data-lang-choice]").forEach(b => {
   b.addEventListener("click", (e) => {
@@ -918,9 +964,9 @@ document.querySelectorAll("[data-lang-choice]").forEach(b => {
     setLanguage(choice);
   });
 });
-document.getElementById("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
-document.getElementById("accentColor").addEventListener("input",e=>{document.documentElement.style.setProperty("--accent",e.target.value);localStorage.setItem("zenvric-accent",e.target.value)});
-document.getElementById("fullscreenPreview").addEventListener("click",()=>{if(qrStage.requestFullscreen)qrStage.requestFullscreen()});
+document.getElementById("languageSelect")?.addEventListener("change",e=>setLanguage(e.target.value));
+document.getElementById("accentColor")?.addEventListener("input",e=>{document.documentElement.style.setProperty("--accent",e.target.value);localStorage.setItem("zenvric-accent",e.target.value)});
+document.getElementById("fullscreenPreview")?.addEventListener("click",()=>{if(qrStage && qrStage.requestFullscreen)qrStage.requestFullscreen()});
 
 // Auth Modal Logic & Early Access VIP
 const authBackdrop = document.getElementById("authBackdrop");
@@ -962,15 +1008,21 @@ function updateAuthUI() {
   updateDailyUsageCounter();
 }
 
-function showAuthModal() {
+window.showAuthModal = function() {
   updateAuthUI();
-  authBackdrop?.classList.add("active");
-  authModal?.classList.add("active");
-}
-function hideAuthModal() {
-  authBackdrop?.classList.remove("active");
-  authModal?.classList.remove("active");
-}
+  const ab = document.getElementById("authBackdrop");
+  const am = document.getElementById("authModal");
+  if (ab) ab.classList.add("active");
+  if (am) am.classList.add("active");
+};
+window.hideAuthModal = function() {
+  const ab = document.getElementById("authBackdrop");
+  const am = document.getElementById("authModal");
+  if (ab) ab.classList.remove("active");
+  if (am) am.classList.remove("active");
+};
+const showAuthModal = window.showAuthModal;
+const hideAuthModal = window.hideAuthModal;
 
 authBtn?.addEventListener("click", showAuthModal);
 authCloseBtn?.addEventListener("click", hideAuthModal);
@@ -1233,12 +1285,24 @@ document.getElementById("siteThemeSelect")?.addEventListener("change", (e) => {
 });
 
 const themeModes = ["light", "dark", "cyberpunk", "glassmorphism"];
-document.getElementById("themeToggleBtn")?.addEventListener("click", () => {
+window.toggleSiteTheme = function() {
   const currentIndex = themeModes.indexOf(state.siteTheme || "light");
   const nextTheme = themeModes[(currentIndex + 1) % themeModes.length];
   setSiteTheme(nextTheme);
   showToast("Theme: " + nextTheme.toUpperCase());
+};
+
+window.toggleLanguage = function() {
+  const nextLang = state.lang === "km" ? "en" : "km";
+  setLanguage(nextLang);
+  showToast(nextLang === "km" ? "🌐 ភាសា: ខ្មែរ" : "🌐 Language: English");
+};
+
+document.getElementById("siteThemeSelect")?.addEventListener("change", (e) => {
+  setSiteTheme(e.target.value);
 });
+
+document.getElementById("themeToggleBtn")?.addEventListener("click", window.toggleSiteTheme);
 
 document.querySelectorAll(".preset-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1251,24 +1315,33 @@ document.querySelectorAll(".preset-btn").forEach(btn => {
   });
 });
 
-function setLanguage(lang){
+window.setLanguage = function(lang){
   const selectedLang = lang || "en";
   state.lang = selectedLang;
-  localStorage.setItem("zenvric-lang", selectedLang);
+  try { localStorage.setItem("zenvric-lang", selectedLang); } catch(e){}
   const overlay = document.getElementById("languageOverlay");
   if (overlay) {
     overlay.classList.add("hidden");
     overlay.style.display = "none";
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none";
   }
   try {
     applyLanguage();
   } catch (e) {
     console.error("Language switch error:", e);
   }
-}
-function toggleCompact(){
-  state.compact=!state.compact;document.body.classList.toggle("compact",state.compact);localStorage.setItem("zenvric-compact",state.compact?"1":"0");document.getElementById("compactSwitch").classList.toggle("on",state.compact);
-}
+};
+const setLanguage = window.setLanguage;
+
+window.toggleCompact = function(){
+  state.compact = !state.compact;
+  document.body.classList.toggle("compact", state.compact);
+  localStorage.setItem("zenvric-compact", state.compact ? "1" : "0");
+  const compSwitch = document.getElementById("compactSwitch");
+  if (compSwitch) compSwitch.classList.toggle("on", state.compact);
+};
+const toggleCompact = window.toggleCompact;
 
 document.getElementById("closeLangOverlayBtn")?.addEventListener("click", () => {
   setLanguage(state.lang || "en");
@@ -1290,16 +1363,11 @@ document.getElementById("languageOverlay")?.addEventListener("click", (e) => {
     if (picker) picker.value = accent;
   }
   document.body.classList.toggle("compact",state.compact);document.getElementById("compactSwitch").classList.toggle("on",state.compact);
-  selectTemplate(state.template, false);
   const langOverlay = document.getElementById("languageOverlay");
-  const hasSavedLang = localStorage.getItem("zenvric-lang");
-  if(!hasSavedLang && langOverlay) {
-    langOverlay.classList.remove("hidden");
-    langOverlay.style.display = "grid";
-  } else if (langOverlay) {
+  if (langOverlay) {
     langOverlay.classList.add("hidden");
     langOverlay.style.display = "none";
   }
-  state.lang=state.lang||"en";
+  state.lang = state.lang || "en";
   applyLanguage();
 })();
