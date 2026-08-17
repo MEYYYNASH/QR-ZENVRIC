@@ -903,9 +903,21 @@ document.querySelectorAll(".nav-item").forEach(b=>b.addEventListener("click",()=
 document.querySelectorAll("[data-view-link]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.viewLink)));
 document.getElementById("compactBtn").addEventListener("click",toggleCompact);
 document.getElementById("compactSwitch").addEventListener("click",toggleCompact);
-document.getElementById("languageBtn").addEventListener("click",()=>document.getElementById("languageOverlay").classList.remove("hidden"));
-document.getElementById("languageMini").addEventListener("click",()=>document.getElementById("languageOverlay").classList.remove("hidden"));
-document.querySelectorAll("[data-lang-choice]").forEach(b=>b.addEventListener("click",()=>setLanguage(b.dataset.langChoice)));
+document.getElementById("languageBtn")?.addEventListener("click", () => {
+  const overlay = document.getElementById("languageOverlay");
+  if (overlay) { overlay.classList.remove("hidden"); overlay.style.display = "grid"; }
+});
+document.getElementById("languageMini")?.addEventListener("click", () => {
+  const overlay = document.getElementById("languageOverlay");
+  if (overlay) { overlay.classList.remove("hidden"); overlay.style.display = "grid"; }
+});
+document.querySelectorAll("[data-lang-choice]").forEach(b => {
+  b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const choice = b.dataset.langChoice || b.getAttribute("data-lang-choice");
+    setLanguage(choice);
+  });
+});
 document.getElementById("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
 document.getElementById("accentColor").addEventListener("input",e=>{document.documentElement.style.setProperty("--accent",e.target.value);localStorage.setItem("zenvric-accent",e.target.value)});
 document.getElementById("fullscreenPreview").addEventListener("click",()=>{if(qrStage.requestFullscreen)qrStage.requestFullscreen()});
@@ -1240,11 +1252,32 @@ document.querySelectorAll(".preset-btn").forEach(btn => {
 });
 
 function setLanguage(lang){
-  state.lang=lang;localStorage.setItem("zenvric-lang",lang);document.getElementById("languageOverlay").classList.add("hidden");applyLanguage();
+  const selectedLang = lang || "en";
+  state.lang = selectedLang;
+  localStorage.setItem("zenvric-lang", selectedLang);
+  const overlay = document.getElementById("languageOverlay");
+  if (overlay) {
+    overlay.classList.add("hidden");
+    overlay.style.display = "none";
+  }
+  try {
+    applyLanguage();
+  } catch (e) {
+    console.error("Language switch error:", e);
+  }
 }
 function toggleCompact(){
   state.compact=!state.compact;document.body.classList.toggle("compact",state.compact);localStorage.setItem("zenvric-compact",state.compact?"1":"0");document.getElementById("compactSwitch").classList.toggle("on",state.compact);
 }
+
+document.getElementById("closeLangOverlayBtn")?.addEventListener("click", () => {
+  setLanguage(state.lang || "en");
+});
+document.getElementById("languageOverlay")?.addEventListener("click", (e) => {
+  if (e.target.id === "languageOverlay") {
+    setLanguage(state.lang || "en");
+  }
+});
 
 (function init(){
   updateAuthUI();
@@ -1257,8 +1290,16 @@ function toggleCompact(){
     if (picker) picker.value = accent;
   }
   document.body.classList.toggle("compact",state.compact);document.getElementById("compactSwitch").classList.toggle("on",state.compact);
-  selectTemplate(state.template);
-  if(!state.lang) document.getElementById("languageOverlay").classList.remove("hidden");
-  else document.getElementById("languageOverlay").classList.add("hidden");
-  state.lang=state.lang||"en";applyLanguage();
+  selectTemplate(state.template, false);
+  const langOverlay = document.getElementById("languageOverlay");
+  const hasSavedLang = localStorage.getItem("zenvric-lang");
+  if(!hasSavedLang && langOverlay) {
+    langOverlay.classList.remove("hidden");
+    langOverlay.style.display = "grid";
+  } else if (langOverlay) {
+    langOverlay.classList.add("hidden");
+    langOverlay.style.display = "none";
+  }
+  state.lang=state.lang||"en";
+  applyLanguage();
 })();
